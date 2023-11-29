@@ -1,12 +1,85 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
+public class Token
+{
+
+}
+
+public class Parenthesis : Token
+{
+    public char parenthesis;
+
+}
+
+public class Number : Token
+{
+    public double num;
+    public static double Calculate(double firstNumber, double secondNumber, char oper)
+    {
+        switch (oper)
+        {
+            case ('+'): return firstNumber + secondNumber;
+            case ('-'): return firstNumber - secondNumber;
+            case ('*'): return firstNumber * secondNumber;
+            case ('/'): return firstNumber / secondNumber;
+            default: return double.NaN;
+        }
+    }
+    public static double CalculateRPN(List<Token> listRPN)
+    {
+        int i = 0;
+        while (listRPN.Count != 1)
+        {
+            if (listRPN[i] is Operation)
+            {
+                Number firstNumber = (Number)listRPN[i - 2];
+                Number secondNumber = (Number)listRPN[i - 1];
+                Operation oper = (Operation)listRPN[i];
+
+                double number = Calculate(firstNumber.num, secondNumber.num, oper.oper);
+                listRPN.RemoveAt(i);
+                listRPN.RemoveAt(i - 1);
+                listRPN.RemoveAt(i - 2);
+                listRPN.Insert(i - 2, new Number() { num = number });
+                i = 0;
+            }
+            i++;
+        }
+        Number answer = (Number)listRPN[0];
+        return answer.num;
+    }
+}
+
+public class Operation : Token
+{
+    public char oper;
+    public static int GetPriority(char oper)
+    {
+        return oper switch
+        {
+            ('+') => 1,
+            ('-') => 1,
+            ('*') => 2,
+            ('/') => 2,
+            ('(') => 0,
+            (')') => 0,
+            _ => 3,
+        };
+    }
+
+}
 
 class Program
 {
     public static void Main()
     {
 
-        GetExpression(Console.ReadLine());
+        GetExpression("821 * (2+2)/4 + 1");
+        // "821 * 2+2/4 + 1" = 821 2 * 2 4 / 1 + + = 1643,5
+        // "821 * (2+2)/4 + 1" = 821 2 2 + * 4 / 1 + = 822
+
 
     }
     public static void GetExpression(string expression)
@@ -18,9 +91,10 @@ class Program
 
     public static void GetListToRPN(string expression)
     {
-        List<object> toRPN = new List<object>();
+        List<Token> toRPN = new List<Token>();
 
         string toBuildNumber = "";
+
         foreach (char symbol in expression)
         {
             if (Char.IsDigit(symbol))
@@ -28,115 +102,107 @@ class Program
                 toBuildNumber += symbol;
             }
 
+            else if (symbol == '(')
+            {
+                toRPN.Add(new Parenthesis() { parenthesis = symbol });
+            }
+
             else
             {
-                toRPN.Add(toBuildNumber);
-                toBuildNumber = "";
-                toRPN.Add(symbol);
+                if (toBuildNumber != "")
+                {
+
+                    toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
+                }
+                if (symbol == ')')
+                {
+                    toRPN.Add(new Parenthesis() { parenthesis = symbol });
+                    toBuildNumber = "";
+                }
+                else
+                {
+                    toBuildNumber = "";
+                        toRPN.Add(new Operation() { oper = symbol });
+                }
             }
 
         }
-        toRPN.Add(toBuildNumber);
+
+        toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
         DoRPN(toRPN);
     }
 
-    public static void DoRPN(List<object> toRPN)
+    public static void DoRPN(List<Token> toRPN)
     {
-        Stack<char> opers = new Stack<char>();
-        List<object> listRPN = new List<object>();
+        Stack<Token> opers = new Stack<Token>();
+        List<Token> RPN = new List<Token>();
+
         foreach (var obj in toRPN)
         {
-            if (obj is string)
+            if (obj is Number)
             {
-                listRPN.Add(obj);
+                RPN.Add(obj);
             }
-            else
+
+            else if (obj is Parenthesis)
             {
-                char sign = (char)obj;
 
-                if (sign == '(') opers.Push(sign);
-
-                else if (sign == ')')
+                Parenthesis par = obj as Parenthesis;
+                if (par.parenthesis == '(')
                 {
-                    while (opers.Peek() != '(')
+                    opers.Push(par);
+                }
+
+                else if (par.parenthesis == ')')
+                {
+                    while (!(opers.Peek() is Parenthesis))
                     {
-                        listRPN.Add(opers.Peek());
+                        RPN.Add(opers.Peek());
                         opers.Pop();
                     }
                     opers.Pop();
                 }
-
-                else if (opers.Count != 0 && GetPriority(opers.Peek()) >= GetPriority(sign))
-                {
-                    listRPN.Add(opers.Peek());
-                    opers.Pop();
-                    opers.Push(sign);
-                }
-                else opers.Push(sign);
             }
 
+            else if(obj is Operation)
+            {
+                Operation operFromList = obj as Operation;
+                if (opers.Count != 0 && !(opers.Peek() is Parenthesis))
+                {
+                    Operation operFromStack = (Operation)opers.Peek();
+                    if (Operation.GetPriority(operFromStack.oper) >= Operation.GetPriority(operFromList.oper))
+                    {
+                        RPN.Add(operFromStack);
+                        opers.Pop();
+                        opers.Push(operFromList);
+                    }
+                    else opers.Push(operFromList);
+                }
+                else opers.Push(operFromList);
+            }
         }
 
         while (opers.Count != 0)
         {
-            listRPN.Add(opers.Peek());
+            RPN.Add((Operation)opers.Peek());
             opers.Pop();
         }
 
-        while (listRPN.Contains(string.Empty))
-        { 
-            listRPN.Remove(string.Empty); 
-        }
-
         Console.WriteLine("Ваше выражение в обратной польской записи: ");
-        foreach (var obj in listRPN) Console.Write($"{obj} ");
+        foreach (Token obj in RPN)
+        {
+            if (obj is Number)
+            {
+                Console.Write($"{(obj as Number).num} ");
+            }
+            if (obj is Operation)
+            {
+                Console.Write($"{(obj as Operation).oper} ");
+            }
+        }
         Console.WriteLine();
 
-        string answer = CalculateRPN(listRPN);
-        Console.WriteLine($"Ответ: { answer}");
-    }
-
-    public static string CalculateRPN(List<object> listRPN)
-    {
-        int i = 0;
-        while (listRPN.Count != 1)
-        {
-            if (listRPN[i] is char)
-            {
-                string number = Calculate((string)listRPN[i - 2], (string)listRPN[i - 1], (char)listRPN[i]).ToString();
-                listRPN.RemoveAt(i);
-                listRPN.RemoveAt(i - 1);
-                listRPN.RemoveAt(i - 2);
-                listRPN.Insert(i - 2, number);
-                i = 0;
-            }
-            i++;
-        }
-        return (string)listRPN[0];
-    }
-    public static int GetPriority(char sign)
-    {
-        switch (sign)
-        {
-            case ('+'): return 1;
-            case ('-'): return 1;
-            case ('*'): return 2;
-            case ('/'): return 2;
-            case ('('): return 0;
-            case (')'): return 0;
-            default: return 3;
-        }
-    }
-
-    public static double Calculate(string firstNumber, string secondNumber, char oper)
-    {
-        switch (oper)
-        {
-            case ('+'): return (double.Parse(firstNumber) + double.Parse(secondNumber));
-            case ('-'): return (double.Parse(firstNumber) - double.Parse(secondNumber));
-            case ('*'): return (double.Parse(firstNumber) * double.Parse(secondNumber));
-            case ('/'): return (double.Parse(firstNumber) / double.Parse(secondNumber));
-            default: return double.NaN;
-        }
+        double answer = Number.CalculateRPN(RPN);
+        Console.WriteLine($"Ответ: {answer}");
     }
 }
