@@ -10,12 +10,12 @@ public class Token
 public class Parenthesis : Token
 {
     public char parenthesis;
-
 }
 
 public class Number : Token
 {
     public double num;
+
     public static double Calculate(double firstNumber, double secondNumber, char oper)
     {
         switch (oper)
@@ -27,6 +27,7 @@ public class Number : Token
             default: return double.NaN;
         }
     }
+
     public static double CalculateRPN(List<Token> listRPN)
     {
         int i = 0;
@@ -76,12 +77,10 @@ class Program
     public static void Main()
     {
 
-        GetExpression("821 * (2+2)/4 + 1");
-        // "821 * 2+2/4 + 1" = 821 2 * 2 4 / 1 + + = 1643,5
-        // "821 * (2+2)/4 + 1" = 821 2 2 + * 4 / 1 + = 822
-
+        GetExpression(Console.ReadLine());
 
     }
+
     public static void GetExpression(string expression)
     {
         expression = expression.Replace(" ", string.Empty);
