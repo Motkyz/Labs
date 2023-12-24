@@ -15,17 +15,23 @@ public class Parenthesis : Token
 public class Number : Token
 {
     public double num;
+}
 
-    public static double Calculate(double firstNumber, double secondNumber, char oper)
+public class Operation : Token
+{
+    public char oper;
+    public static int GetPriority(char oper)
     {
-        switch (oper)
+        return oper switch
         {
-            case ('+'): return firstNumber + secondNumber;
-            case ('-'): return firstNumber - secondNumber;
-            case ('*'): return firstNumber * secondNumber;
-            case ('/'): return firstNumber / secondNumber;
-            default: return double.NaN;
-        }
+            ('+') => 1,
+            ('-') => 1,
+            ('*') => 2,
+            ('/') => 2,
+            ('(') => 0,
+            (')') => 0,
+            _ => 3,
+        };
     }
 
     public static double CalculateRPN(List<Token> listRPN)
@@ -51,38 +57,37 @@ public class Number : Token
         Number answer = (Number)listRPN[0];
         return answer.num;
     }
-}
 
-public class Operation : Token
-{
-    public char oper;
-    public static int GetPriority(char oper)
+    public static double Calculate(double firstNumber, double secondNumber, char oper)
     {
-        return oper switch
+        switch (oper)
         {
-            ('+') => 1,
-            ('-') => 1,
-            ('*') => 2,
-            ('/') => 2,
-            ('(') => 0,
-            (')') => 0,
-            _ => 3,
-        };
+            case ('+'): return firstNumber + secondNumber;
+            case ('-'): return firstNumber - secondNumber;
+            case ('*'): return firstNumber * secondNumber;
+            case ('/'): return firstNumber / secondNumber;
+            default: return double.NaN;
+        }
     }
-
 }
 
 class Program
 {
     public static void Main()
     {
-
+        Console.WriteLine("Введите выражение ");
         GetExpression(Console.ReadLine());
-
     }
 
     public static void GetExpression(string expression)
     {
+        if (expression == string.Empty)
+        {
+            Console.WriteLine("Вы не написали выражение");
+            Console.WriteLine("Попробуйте снова");
+            GetExpression(Console.ReadLine());
+        }
+
         expression = expression.Replace(" ", string.Empty);
         Console.WriteLine($"Ваше выражение: {expression}");
         GetListToRPN(expression);
@@ -101,6 +106,11 @@ class Program
                 toBuildNumber += symbol;
             }
 
+            else if (symbol == ',' || symbol == '.')
+            {
+                toBuildNumber += ',';
+            }
+
             else if (symbol == '(')
             {
                 toRPN.Add(new Parenthesis() { parenthesis = symbol });
@@ -110,24 +120,28 @@ class Program
             {
                 if (toBuildNumber != "")
                 {
-
                     toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
                 }
+
                 if (symbol == ')')
                 {
                     toRPN.Add(new Parenthesis() { parenthesis = symbol });
                     toBuildNumber = "";
                 }
+
                 else
                 {
                     toBuildNumber = "";
-                        toRPN.Add(new Operation() { oper = symbol });
+                    toRPN.Add(new Operation() { oper = symbol });
                 }
             }
 
         }
 
-        toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
+        if (toBuildNumber != "")
+        {
+            toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
+        }
         DoRPN(toRPN);
     }
 
@@ -143,10 +157,9 @@ class Program
                 RPN.Add(obj);
             }
 
-            else if (obj is Parenthesis)
+            else if (obj is Parenthesis par)
             {
 
-                Parenthesis par = obj as Parenthesis;
                 if (par.parenthesis == '(')
                 {
                     opers.Push(par);
@@ -163,9 +176,8 @@ class Program
                 }
             }
 
-            else if(obj is Operation)
+            else if (obj is Operation operFromList)
             {
-                Operation operFromList = obj as Operation;
                 if (opers.Count != 0 && !(opers.Peek() is Parenthesis))
                 {
                     Operation operFromStack = (Operation)opers.Peek();
@@ -201,7 +213,7 @@ class Program
         }
         Console.WriteLine();
 
-        double answer = Number.CalculateRPN(RPN);
+        double answer = Operation.CalculateRPN(RPN);
         Console.WriteLine($"Ответ: {answer}");
     }
 }
