@@ -9,7 +9,7 @@ public class Token
 
 public class Parenthesis : Token
 {
-    public char parenthesis;
+    public char par;
 }
 
 public class Number : Token
@@ -36,26 +36,25 @@ public class Operation : Token
 
     public static double CalculateRPN(List<Token> listRPN)
     {
-        int i = 0;
-        while (listRPN.Count != 1)
-        {
-            if (listRPN[i] is Operation)
-            {
-                Number firstNumber = (Number)listRPN[i - 2];
-                Number secondNumber = (Number)listRPN[i - 1];
-                Operation oper = (Operation)listRPN[i];
+        Stack<double> result = new Stack<double>();
 
-                double number = Calculate(firstNumber.num, secondNumber.num, oper.oper);
-                listRPN.RemoveAt(i);
-                listRPN.RemoveAt(i - 1);
-                listRPN.RemoveAt(i - 2);
-                listRPN.Insert(i - 2, new Number() { num = number });
-                i = 0;
+        foreach (Token token in listRPN) 
+        {
+            if (token is Number number)
+            {
+                result.Push(number.num);
             }
-            i++;
+
+            else if (token is Operation operation)
+            {
+                double secondNumber = result.Pop();
+                double firstNumber = result.Pop();
+                result.Push(Calculate(firstNumber, secondNumber, operation.oper));
+            }
         }
-        Number answer = (Number)listRPN[0];
-        return answer.num;
+
+        double answer = result.Pop();
+        return answer;
     }
 
     public static double Calculate(double firstNumber, double secondNumber, char oper)
@@ -75,116 +74,108 @@ class Program
 {
     public static void Main()
     {
-        Console.WriteLine("Введите выражение ");
-        GetExpression(Console.ReadLine());
-    }
-
-    public static void GetExpression(string expression)
-    {
-        if (expression == string.Empty)
-        {
-            Console.WriteLine("Вы не написали выражение");
-            Console.WriteLine("Попробуйте снова");
-            GetExpression(Console.ReadLine());
-        }
-
+        Console.Write("Введите выражение: ");
+        string expression = Console.ReadLine();//"421 * (2 / (423 + 1) - 4) * 2";
         expression = expression.Replace(" ", string.Empty);
-        Console.WriteLine($"Ваше выражение: {expression}");
-        GetListToRPN(expression);
+        Console.WriteLine($"Ваше выражение: {expression}\n");
+        List<Token> tokens = GetTokensList(expression);
+        List<Token> rpn = DoRPN(tokens);
+        ToShowRPN(rpn);
+        double answer = Operation.CalculateRPN(rpn);
+        Console.WriteLine($"Ответ: {answer}");
     }
 
-    public static void GetListToRPN(string expression)
+    public static List<Token> GetTokensList(string expression)
     {
-        List<Token> toRPN = new List<Token>();
+        List<Token> tokensList = new List<Token>();
 
-        string toBuildNumber = "";
+        string number = string.Empty;
 
         foreach (char symbol in expression)
         {
             if (Char.IsDigit(symbol))
             {
-                toBuildNumber += symbol;
+                number += symbol;
             }
 
             else if (symbol == ',' || symbol == '.')
             {
-                toBuildNumber += ',';
+                number += ',';
             }
 
             else if (symbol == '(')
             {
-                toRPN.Add(new Parenthesis() { parenthesis = symbol });
+                tokensList.Add(new Parenthesis() { par = symbol });
             }
 
             else
             {
-                if (toBuildNumber != "")
+                if (number != string.Empty)
                 {
-                    toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
+                    tokensList.Add(new Number() { num = double.Parse(number) });
                 }
 
                 if (symbol == ')')
                 {
-                    toRPN.Add(new Parenthesis() { parenthesis = symbol });
-                    toBuildNumber = "";
+                    tokensList.Add(new Parenthesis() { par = symbol });
+                    number = string.Empty;
                 }
 
                 else
                 {
-                    toBuildNumber = "";
-                    toRPN.Add(new Operation() { oper = symbol });
+                    tokensList.Add(new Operation() { oper = symbol });
+                    number = string.Empty;
                 }
             }
 
         }
 
-        if (toBuildNumber != "")
+        if (number != string.Empty)
         {
-            toRPN.Add(new Number() { num = double.Parse(toBuildNumber) });
+            tokensList.Add(new Number() { num = double.Parse(number) });
         }
-        DoRPN(toRPN);
+
+        return tokensList;
     }
 
-    public static void DoRPN(List<Token> toRPN)
+    public static List<Token> DoRPN(List<Token> tokensList)
     {
         Stack<Token> opers = new Stack<Token>();
-        List<Token> RPN = new List<Token>();
+        List<Token> rpn = new List<Token>();
 
-        foreach (var obj in toRPN)
+        foreach (var token in tokensList)
         {
-            if (obj is Number)
+            if (token is Number)
             {
-                RPN.Add(obj);
+                rpn.Add(token);
             }
 
-            else if (obj is Parenthesis par)
+            else if (token is Parenthesis parenthesis)
             {
 
-                if (par.parenthesis == '(')
+                if (parenthesis.par == '(')
                 {
-                    opers.Push(par);
+                    opers.Push(parenthesis);
                 }
 
-                else if (par.parenthesis == ')')
+                else if (parenthesis.par == ')')
                 {
                     while (!(opers.Peek() is Parenthesis))
                     {
-                        RPN.Add(opers.Peek());
-                        opers.Pop();
+                        rpn.Add(opers.Pop());
                     }
                     opers.Pop();
                 }
             }
 
-            else if (obj is Operation operFromList)
+            else if (token is Operation operFromList)
             {
-                if (opers.Count != 0 && !(opers.Peek() is Parenthesis))
+                if (opers.Count != 0 && opers.Peek() is Operation operFromStack)
                 {
-                    Operation operFromStack = (Operation)opers.Peek();
+                    opers.Pop();
                     if (Operation.GetPriority(operFromStack.oper) >= Operation.GetPriority(operFromList.oper))
                     {
-                        RPN.Add(operFromStack);
-                        opers.Pop();
+                        rpn.Add(operFromStack);
                         opers.Push(operFromList);
                     }
                     else opers.Push(operFromList);
@@ -195,25 +186,26 @@ class Program
 
         while (opers.Count != 0)
         {
-            RPN.Add((Operation)opers.Peek());
-            opers.Pop();
+            rpn.Add(opers.Pop());
         }
 
+        return rpn;
+    }
+
+    public static void ToShowRPN(List<Token> rpn)
+    {
         Console.WriteLine("Ваше выражение в обратной польской записи: ");
-        foreach (Token obj in RPN)
+        foreach (Token obj in rpn)
         {
-            if (obj is Number)
+            if (obj is Number number)
             {
-                Console.Write($"{(obj as Number).num} ");
+                Console.Write($"{number.num} ");
             }
-            if (obj is Operation)
+            if (obj is Operation operation)
             {
-                Console.Write($"{(obj as Operation).oper} ");
+                Console.Write($"{operation.oper} ");
             }
         }
-        Console.WriteLine();
-
-        double answer = Operation.CalculateRPN(RPN);
-        Console.WriteLine($"Ответ: {answer}");
+        Console.WriteLine("\n");
     }
 }
