@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
+using System.Numerics;
 
 public class Token
 {
@@ -9,41 +11,113 @@ public class Token
 
 public class Parenthesis : Token
 {
-    public char par;
+    public char Symbol;
+    public bool IsClosing;
+
+    public Parenthesis(char symbol)
+    {
+        Symbol = symbol;
+        IsClosing = symbol == ')';
+    }
 }
 
 public class Number : Token
 {
-    public double num;
+    public double Value;
+
+    public Number(string str)
+    {
+        Value = double.Parse(str);
+    }
+
+    public Number(double value)
+    {
+        Value = value;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
+
+    public static Number operator +(Number a, Number b)
+    {
+        return new Number(a.Value + b.Value);
+    }
+
+    public static Number operator -(Number a, Number b)
+    {
+        return new Number(a.Value - b.Value);
+    }
+
+    public static Number operator *(Number a, Number b)
+    {
+        return new Number(a.Value * b.Value);
+    }
+
+    public static Number operator /(Number a, Number b)
+    {
+        return new Number(a.Value / b.Value);
+    }
 }
 
 public class Operation : Token
 {
-    public char oper;
-    public static int GetPriority(char oper)
+    public char Symbol;
+    public int Priority;
+
+    public Operation(char symbol)
     {
-        switch (oper)
-        {
-            case '+': return 1;
-            case '-': return 1;
-            case '*': return 2;
-            case '/': return 2;
-            case '(': return 0;
-            case ')': return 0;
-            default: return 3;
-        }
+        Symbol = symbol;
+        Priority = GetPriority(symbol);
     }
 
-    public static double Calculate(double firstNumber, double secondNumber, char oper)
+    public override string ToString() 
     {
-        switch (oper)
+        return Symbol.ToString();
+    }
+
+    public static int GetPriority(char operation)
+    {
+        Dictionary<char, int> priorities = new()
         {
-            case ('+'): return firstNumber + secondNumber;
-            case ('-'): return firstNumber - secondNumber;
-            case ('*'): return firstNumber * secondNumber;
-            case ('/'): return firstNumber / secondNumber;
-            default: return double.NaN;
-        }
+            {'+', 1 },
+            {'-', 1 },
+            {'*', 2 },
+            {'/', 2 }
+        };
+
+        return priorities[operation];
+    }
+
+    public static bool operator >(Operation a, Operation b)
+    {
+        return (a.Priority > b.Priority);
+    }
+
+    public static bool operator <(Operation a, Operation b)
+    {
+        return (a.Priority < b.Priority);
+    }
+
+    public static bool operator >=(Operation a, Operation b)
+    {
+        return (a.Priority >= b.Priority);
+    }
+
+    public static bool operator <=(Operation a, Operation b)
+    {
+        return (a.Priority <= b.Priority);
+    }
+
+    public static bool operator ==(Operation a, Operation b)
+    {
+        return (a.Priority == b.Priority);
+    }
+
+    public static bool operator !=(Operation a, Operation b)
+    {
+        return (a.Priority != b.Priority);
     }
 }
 
@@ -53,16 +127,17 @@ class Program
     {
         Console.Write("Введите выражение: ");
         string expression = Console.ReadLine();
-        expression = expression.Replace(" ", string.Empty);
         List<Token> tokens = GetTokensList(expression);
         List<Token> rpn = RPNCalculator.TransformToRPN(tokens);
         RPNCalculator.ShowRPN(rpn);
-        double answer = RPNCalculator.CalculateRPN(rpn);
+        Number answer = RPNCalculator.CalculateRPN(rpn);
         Console.WriteLine($"Ответ: {answer}");
     }
 
     static List<Token> GetTokensList(string expression)
     {
+        expression = expression.Replace(" ", string.Empty);
+
         List<Token> tokensList = new List<Token>();
         string number = string.Empty;
 
@@ -72,33 +147,28 @@ class Program
             {
                 number += symbol;
             }
-            else if (symbol == '(')
-            {
-                tokensList.Add(new Parenthesis() { par = symbol });
-            }
             else
             {
                 if (number != string.Empty)
                 {
-                    tokensList.Add(new Number() { num = double.Parse(number) });
+                    tokensList.Add(new Number(number));
+                    number = string.Empty;
                 }
 
-                if (symbol == ')')
+                if (symbol == '(' || symbol == ')')
                 {
-                    tokensList.Add(new Parenthesis() { par = symbol });
-                    number = string.Empty;
+                    tokensList.Add(new Parenthesis(symbol));
                 }
                 else
                 {
-                    tokensList.Add(new Operation() { oper = symbol });
-                    number = string.Empty;
+                    tokensList.Add(new Operation(symbol));
                 }
             }
         }
 
         if (number != string.Empty)
         {
-            tokensList.Add(new Number() { num = double.Parse(number) });
+            tokensList.Add(new Number(number));
         }
 
         return tokensList;
@@ -112,7 +182,7 @@ class RPNCalculator
         Stack<Token> opers = new Stack<Token>();
         List<Token> rpn = new List<Token>();
 
-        foreach (var token in tokensList)
+        foreach (Token token in tokensList)
         {
             if (token is Number)
             {
@@ -120,13 +190,13 @@ class RPNCalculator
             }
             else if (token is Parenthesis parenthesis)
             {
-                if (parenthesis.par == '(')
+                if (!parenthesis.IsClosing)
                 {
                     opers.Push(parenthesis);
                 }
-                else if (parenthesis.par == ')')
+                else if (parenthesis.IsClosing)
                 {
-                    while (!(opers.Peek() is Parenthesis))
+                    while (opers.Peek() is not Parenthesis)
                     {
                         rpn.Add(opers.Pop());
                     }
@@ -137,15 +207,18 @@ class RPNCalculator
             {
                 if (opers.Count != 0 && opers.Peek() is Operation operFromStack)
                 {
-                    opers.Pop();
-                    if (Operation.GetPriority(operFromStack.oper) >= Operation.GetPriority(operFromList.oper))
+                    if (operFromStack >= operFromList)
                     {
-                        rpn.Add(operFromStack);
+                        rpn.Add(opers.Pop());
                         opers.Push(operFromList);
                     }
                     else opers.Push(operFromList);
                 }
                 else opers.Push(operFromList);
+            }
+            else
+            {
+                throw new Exception("Invalid Token");
             }
         }
 
@@ -157,41 +230,53 @@ class RPNCalculator
         return rpn;
     }
 
-    public static double CalculateRPN(List<Token> listRPN)
+    public static Number CalculateRPN(List<Token> listRPN)
     {
-        Stack<double> result = new Stack<double>();
+        Stack<Number> result = new Stack<Number>();
 
         foreach (Token token in listRPN)
         {
             if (token is Number number)
             {
-                result.Push(number.num);
+                result.Push(number);
             }
             else if (token is Operation operation)
             {
-                double secondNumber = result.Pop();
-                double firstNumber = result.Pop();
-                result.Push(Operation.Calculate(firstNumber, secondNumber, operation.oper));
+                Number secondNumber = result.Pop();
+                Number firstNumber = result.Pop();
+                result.Push(Calculate(firstNumber, secondNumber, operation));
             }
         }
 
-        double answer = result.Pop();
-        return answer;
+        return result.Pop();
+    }
+
+    public static Number Calculate(Number firstNumber, Number secondNumber, Operation operation)
+    {
+        switch (operation.Symbol)
+        {
+            case '+': return firstNumber + secondNumber;
+            case '-': return firstNumber - secondNumber;
+            case '*': return firstNumber * secondNumber;
+            case '/': return firstNumber / secondNumber;
+        }
+
+        throw new Exception("Invalid symbol");
     }
 
     public static void ShowRPN(List<Token> rpn)
     {
         Console.WriteLine("\nВаше выражение в обратной польской записи: ");
-        foreach (Token obj in rpn)
+        foreach (Token token in rpn)
         {
-            if (obj is Number number)
+            if (token is Number number)
             {
-                Console.Write($"{number.num} ");
+                Console.Write($"{number} ");
             }
 
-            if (obj is Operation operation)
+            if (token is Operation operation)
             {
-                Console.Write($"{operation.oper} ");
+                Console.Write($"{operation} ");
             }
         }
         Console.WriteLine("\n");
