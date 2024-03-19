@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laba 4 (RPN)", "Laba 4 (RPN).csproj", "{152A66FC-1F97-4FB6-98EE-6B506FAB9637}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab", "Lab.csproj", "{152A66FC-1F97-4FB6-98EE-6B506FAB9637}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPF", "..\WPF\WPF.csproj", "{64FC8AB4-386E-430A-9045-A1275EBD309E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPF", "..\WPF\WPF.csproj", "{64FC8AB4-386E-430A-9045-A1275EBD309E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPN_Logic", "..\RPN_Logic\RPN_Logic.csproj", "{0368D46D-B671-4C9D-BEBC-0DEEE251CDF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPN_Logic", "..\RPN_Logic\RPN_Logic.csproj", "{0368D46D-B671-4C9D-BEBC-0DEEE251CDF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
