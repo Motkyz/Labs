@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "WPF/1.0.0": {
+        "dependencies": {
+          "RPN_Logic": "1.0.0"
+        },
+        "runtime": {
+          "WPF.dll": {}
+        }
+      },
+      "RPN_Logic/1.0.0": {
+        "runtime": {
+          "RPN_Logic.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "WPF/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "RPN_Logic/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
