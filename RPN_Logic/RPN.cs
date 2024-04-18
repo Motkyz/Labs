@@ -23,9 +23,11 @@ namespace RPN_Logic
     public class Number : Token
     {
         public double Value;
+        public string Argument;
 
         public Number(string str)
         {
+            str = str.Replace('.', ',');
             Value = double.Parse(str);
         }
 
@@ -122,16 +124,16 @@ namespace RPN_Logic
 
     public class RPNCalculator
     {
-        private List<Token> RPN;
+        public List<Token> RPN;
         public double Answer;
 
-        public RPNCalculator(string expression) 
+        public RPNCalculator(string expression, string argument)
         {
-            RPN = TransformToRPN(GetTokensList(expression));
+            RPN = TransformToRPN(GetTokensList(expression, argument));
             Answer = CalculateRPN(RPN).Value;
         }
 
-        public static List<Token> GetTokensList(string expression)
+        public static List<Token> GetTokensList(string expression, string argument)
         {
             expression = expression.Replace(" ", string.Empty);
 
@@ -140,7 +142,7 @@ namespace RPN_Logic
 
             foreach (char symbol in expression)
             {
-                if (Char.IsDigit(symbol) || symbol == ',')
+                if (Char.IsDigit(symbol) || symbol == ',' || symbol == '.')
                 {
                     number += symbol;
                 }
@@ -152,7 +154,11 @@ namespace RPN_Logic
                         number = string.Empty;
                     }
 
-                    if (symbol == '(' || symbol == ')')
+                    if (symbol == 'x')
+                    {
+                        tokensList.Add(new Number(argument));
+                    }
+                    else if (symbol == '(' || symbol == ')')
                     {
                         tokensList.Add(new Parenthesis(symbol));
                     }
