@@ -102,7 +102,7 @@ namespace RPN_Logic
         public List<Token> RPN;
         public double Answer;
 
-        public RPNCalculator(string expression, string argument = null)
+        public RPNCalculator(string expression, string argument)
         {
             RPN = TransformToRPN(GetTokensList(expression, argument));
             Answer = CalculateRPN(RPN).Value;
@@ -237,24 +237,6 @@ namespace RPN_Logic
             }
 
             throw new Exception("Invalid symbol");
-        }
-
-        public static void ShowRPN(List<Token> rpn)
-        {
-            Console.WriteLine("\nВаше выражение в обратной польской записи: ");
-            foreach (Token token in rpn)
-            {
-                if (token is Number number)
-                {
-                    Console.Write($"{number} ");
-                }
-
-                if (token is Operation operation)
-                {
-                    Console.Write($"{operation} ");
-                }
-            }
-            Console.WriteLine("\n");
         }
     }
 }
