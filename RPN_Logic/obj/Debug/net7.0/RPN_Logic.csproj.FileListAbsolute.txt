@@ -9,3 +9,4 @@ C:\Users\Matvey\Git\Labs\RPN_Logic\obj\Debug\net7.0\RPN_Logic.dll
 C:\Users\Matvey\Git\Labs\RPN_Logic\obj\Debug\net7.0\refint\RPN_Logic.dll
 C:\Users\Matvey\Git\Labs\RPN_Logic\obj\Debug\net7.0\RPN_Logic.pdb
 C:\Users\Matvey\Git\Labs\RPN_Logic\obj\Debug\net7.0\ref\RPN_Logic.dll
+C:\Users\Matvey\Git\Labs\RPN_Logic\obj\Debug\net7.0\RPN_Logic.sourcelink.json

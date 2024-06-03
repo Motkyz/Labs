@@ -36,6 +36,11 @@ namespace RPN_Logic
             Value = value;
         }
 
+        public static bool IsX(char symbol) //Будет шик и блеск если сделаешь не статик, удачи
+        {
+            return symbol is 'x' or 'X' or 'х' or 'Х';
+        }
+
         public override string ToString()
         {
             return Value.ToString();
@@ -73,7 +78,7 @@ namespace RPN_Logic
             Priority = GetPriority(symbol);
         }
 
-        public override string ToString()
+        public override string ToString() //Я не понял нахуя мне это тут надо
         {
             return Symbol.ToString();
         }
@@ -81,12 +86,12 @@ namespace RPN_Logic
         public static int GetPriority(char operation)
         {
             Dictionary<char, int> priorities = new()
-        {
-            {'+', 1 },
-            {'-', 1 },
-            {'*', 2 },
-            {'/', 2 }
-        };
+            {
+                {'+', 1 },
+                {'-', 1 },
+                {'*', 2 },
+                {'/', 2 }
+            };
 
             return priorities[operation];
         }
@@ -127,7 +132,7 @@ namespace RPN_Logic
         public List<Token> RPN;
         public double Answer;
 
-        public RPNCalculator(string expression, string argument)
+        public RPNCalculator(string expression, string argument = null)
         {
             RPN = TransformToRPN(GetTokensList(expression, argument));
             Answer = CalculateRPN(RPN).Value;
@@ -154,7 +159,7 @@ namespace RPN_Logic
                         number = string.Empty;
                     }
 
-                    if (symbol == 'x')
+                    if (Number.IsX(symbol)) //Переделай эту хуету нормально, перенеси в калькулятор я хз
                     {
                         tokensList.Add(new Number(argument));
                     }
