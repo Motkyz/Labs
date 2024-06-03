@@ -36,14 +36,9 @@ namespace RPN_Logic
             Value = value;
         }
 
-        public static bool IsX(char symbol) //Будет шик и блеск если сделаешь не статик, удачи
+        public static bool IsX(char symbol)
         {
             return symbol is 'x' or 'X' or 'х' or 'Х';
-        }
-
-        public override string ToString()
-        {
-            return Value.ToString();
         }
 
         public static Number operator +(Number a, Number b)
@@ -78,11 +73,6 @@ namespace RPN_Logic
             Priority = GetPriority(symbol);
         }
 
-        public override string ToString() //Я не понял нахуя мне это тут надо
-        {
-            return Symbol.ToString();
-        }
-
         public static int GetPriority(char operation)
         {
             Dictionary<char, int> priorities = new()
@@ -96,16 +86,6 @@ namespace RPN_Logic
             return priorities[operation];
         }
 
-        public static bool operator >(Operation a, Operation b)
-        {
-            return (a.Priority > b.Priority);
-        }
-
-        public static bool operator <(Operation a, Operation b)
-        {
-            return (a.Priority < b.Priority);
-        }
-
         public static bool operator >=(Operation a, Operation b)
         {
             return (a.Priority >= b.Priority);
@@ -114,16 +94,6 @@ namespace RPN_Logic
         public static bool operator <=(Operation a, Operation b)
         {
             return (a.Priority <= b.Priority);
-        }
-
-        public static bool operator ==(Operation a, Operation b)
-        {
-            return (a.Priority == b.Priority);
-        }
-
-        public static bool operator !=(Operation a, Operation b)
-        {
-            return (a.Priority != b.Priority);
         }
     }
 
@@ -159,7 +129,7 @@ namespace RPN_Logic
                         number = string.Empty;
                     }
 
-                    if (Number.IsX(symbol)) //Переделай эту хуету нормально, перенеси в калькулятор я хз
+                    if (Number.IsX(symbol))
                     {
                         tokensList.Add(new Number(argument));
                     }

@@ -29,11 +29,8 @@ namespace WPF
         private void btnMain_Click(object sender, RoutedEventArgs e)
         {
             string expression = tbInput.Text;
-            if (tbInputArg.Text != "")
-            {
-                double answer = new RPNCalculator(expression, tbInputArg.Text).Answer;
-                lblOutput.Content = answer;
-            }
+            double answer = new RPNCalculator(expression).Answer;
+            lblOutput.Content = answer;
         }
     }
 }
