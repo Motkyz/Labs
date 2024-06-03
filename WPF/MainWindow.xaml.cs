@@ -19,6 +19,7 @@ namespace WPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -29,9 +30,11 @@ namespace WPF
         private void btnMain_Click(object sender, RoutedEventArgs e)
         {
             string expression = tbInput.Text;
-            if (tbInputArg.Text != "")
+            if (tbInputArg.Text != string.Empty)
             {
-                double answer = new RPNCalculator(expression, tbInputArg.Text).Answer;
+                string XValue = tbInputArg.Text;
+                RPNCalculator calculator = new RPNCalculator(expression);
+                Number answer = calculator.CalculateRPN(new Number(XValue));
                 lblOutput.Content = answer;
             }
         }

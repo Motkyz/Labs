@@ -23,22 +23,32 @@ namespace RPN_Logic
     public class Number : Token
     {
         public double Value;
-        public string Argument;
-
-        public Number(string str)
-        {
-            str = str.Replace('.', ',');
-            Value = double.Parse(str);
-        }
+        public bool IsArg = false;
 
         public Number(double value)
         {
             Value = value;
         }
 
+        public Number(string str)
+        {
+            str = str.Replace(',', '.');
+            Value = double.Parse(str);
+        }
+
+        public Number(char arg)
+        {
+            IsArg = true;
+        }
+
         public static bool IsX(char symbol)
         {
             return symbol is 'x' or 'X' or 'х' or 'Х';
+        }
+
+        public override string ToString() 
+        { 
+            return Value.ToString(); 
         }
 
         public static Number operator +(Number a, Number b)
@@ -99,16 +109,15 @@ namespace RPN_Logic
 
     public class RPNCalculator
     {
-        public List<Token> RPN;
+        public static List<Token> RPNList;
         public double Answer;
 
-        public RPNCalculator(string expression, string argument)
+        public RPNCalculator(string expression)
         {
-            RPN = TransformToRPN(GetTokensList(expression, argument));
-            Answer = CalculateRPN(RPN).Value;
+            RPNList = TransformToRPN(GetTokensList(expression));
         }
 
-        public static List<Token> GetTokensList(string expression, string argument)
+        public static List<Token> GetTokensList(string expression)
         {
             expression = expression.Replace(" ", string.Empty);
 
@@ -131,7 +140,7 @@ namespace RPN_Logic
 
                     if (Number.IsX(symbol))
                     {
-                        tokensList.Add(new Number(argument));
+                        tokensList.Add(new Number(symbol));
                     }
                     else if (symbol == '(' || symbol == ')')
                     {
@@ -205,15 +214,19 @@ namespace RPN_Logic
             return rpn;
         }
 
-        public static Number CalculateRPN(List<Token> listRPN)
+        public Number CalculateRPN(Number XValue)
         {
             Stack<Number> result = new Stack<Number>();
 
-            foreach (Token token in listRPN)
+            foreach (Token token in RPNList)
             {
                 if (token is Number number)
                 {
-                    result.Push(number);
+                    if (number.IsArg)
+                    {
+                        result.Push(XValue);
+                    }
+                    else result.Push(number);
                 }
                 else if (token is Operation operation)
                 {
