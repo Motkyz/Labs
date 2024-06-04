@@ -214,7 +214,7 @@ namespace RPNLogic
             return rpn;
         }
 
-        public Number CalculateRPN(string XValue)
+        public double CalculateRPN(double XValue)
         {
             Stack<Number> result = new Stack<Number>();
 
@@ -236,7 +236,7 @@ namespace RPNLogic
                 }
             }
 
-            return result.Pop();
+            return result.Pop().Value;
         }
 
         public static Number Calculate(Number firstNumber, Number secondNumber, Operation operation)
