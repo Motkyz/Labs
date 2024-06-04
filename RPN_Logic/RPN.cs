@@ -32,7 +32,7 @@ namespace RPN_Logic
 
         public Number(string str)
         {
-            str = str.Replace(',', '.');
+            str = str.Replace('.', ',');
             Value = double.Parse(str);
         }
 
@@ -46,9 +46,9 @@ namespace RPN_Logic
             return symbol is 'x' or 'X' or 'х' or 'Х';
         }
 
-        public override string ToString() 
-        { 
-            return Value.ToString(); 
+        public override string ToString()
+        {
+            return Value.ToString();
         }
 
         public static Number operator +(Number a, Number b)
@@ -214,7 +214,7 @@ namespace RPN_Logic
             return rpn;
         }
 
-        public Number CalculateRPN(Number XValue)
+        public Number CalculateRPN(string XValue)
         {
             Stack<Number> result = new Stack<Number>();
 
@@ -224,7 +224,7 @@ namespace RPN_Logic
                 {
                     if (number.IsArg)
                     {
-                        result.Push(XValue);
+                        result.Push(new Number(XValue));
                     }
                     else result.Push(number);
                 }

@@ -34,7 +34,7 @@ namespace WPF
             {
                 string XValue = tbInputArg.Text;
                 RPNCalculator calculator = new RPNCalculator(expression);
-                Number answer = calculator.CalculateRPN(new Number(XValue));
+                Number answer = calculator.CalculateRPN(XValue);
                 lblOutput.Content = answer;
             }
         }
