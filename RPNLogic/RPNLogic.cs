@@ -1,7 +1,7 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
-namespace RPN_Logic
+namespace RPNLogic
 {
     public class Token
     {

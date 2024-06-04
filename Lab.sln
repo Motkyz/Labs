@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPNConsole", "RPNConsole\RPNConsole.csproj", "{B96B73F0-5307-4CE6-B500-A163BC35BC6D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPNWPF", "RPNWPF\RPNWPF.csproj", "{9CA37E98-89F2-4A46-861B-8680984903F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPNLogic", "RPNLogic\RPNLogic.csproj", "{28509641-8AF0-41EF-9763-53719B1C4327}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B96B73F0-5307-4CE6-B500-A163BC35BC6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B96B73F0-5307-4CE6-B500-A163BC35BC6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B96B73F0-5307-4CE6-B500-A163BC35BC6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B96B73F0-5307-4CE6-B500-A163BC35BC6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA37E98-89F2-4A46-861B-8680984903F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA37E98-89F2-4A46-861B-8680984903F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA37E98-89F2-4A46-861B-8680984903F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA37E98-89F2-4A46-861B-8680984903F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28509641-8AF0-41EF-9763-53719B1C4327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28509641-8AF0-41EF-9763-53719B1C4327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28509641-8AF0-41EF-9763-53719B1C4327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28509641-8AF0-41EF-9763-53719B1C4327}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44551702-4A15-41C9-A266-F69C33A2F49A}
+	EndGlobalSection
+EndGlobal

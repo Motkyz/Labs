@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Numerics;
-using RPN_Logic;
+using RPNLogic;
 
 class Program
 {
@@ -13,8 +13,8 @@ class Program
         string expression = Console.ReadLine();
         Console.Write("Введите значение переменной: ");
         string argument = Console.ReadLine();
-        RPNCalculator rpn = new RPNCalculator(expression, argument);
-        double answer = rpn.Answer;
+        RPNCalculator calculator = new RPNCalculator(expression);
+        Number answer = calculator.CalculateRPN(argument);
         Console.WriteLine($"Ответ: {answer}");
     }
 }
