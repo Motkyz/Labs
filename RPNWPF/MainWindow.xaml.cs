@@ -53,7 +53,7 @@ namespace WPF
 
             for (double x = xStart; x <= xEnd; x+=step)
             {
-                double y = calculator.CalculateRPN(x);
+                double y = calculator.Calculate(x);
                 points.Add(new Point(x, y));
 
                 yStart = (yStart > y) ? y : yStart;

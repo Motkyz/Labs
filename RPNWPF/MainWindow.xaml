@@ -12,18 +12,18 @@
             <ColumnDefinition Width="519*"/>
         </Grid.ColumnDefinitions>
         <Button x:Name="btnCalculate" Content="Построить" HorizontalAlignment="Left" Margin="406,385,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.423,0.994" Click="btnMain_Click" Grid.Column="1" Width="111"/>
-        <TextBox x:Name="tbInput" Text="x*x"  HorizontalAlignment="Left" Margin="160,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="515" Height="26" Grid.ColumnSpan="2" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="tbInput" HorizontalAlignment="Left" Margin="160,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="515" Height="26" Grid.ColumnSpan="2" VerticalContentAlignment="Center"/>
         <Label Content="Введите выражение:" HorizontalAlignment="Left" Margin="31,34,0,0" VerticalAlignment="Top"/>
         <Canvas x:Name="CanvasField" Margin="31,86,225,32" ClipToBounds="True" Grid.ColumnSpan="2" Background="White"/>
         <Border BorderBrush="Black" BorderThickness="1" Margin="31,86,225,32" Grid.ColumnSpan="2"/>
         <Label Grid.Column="1" Content="Начало:" HorizontalAlignment="Left" Height="26" Margin="406,89,0,0" VerticalAlignment="Top" Width="111" HorizontalContentAlignment="Center"/>
-        <TextBox x:Name="tbXStart" Text="-10" HorizontalAlignment="Left" Margin="406,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="tbXStart" HorizontalAlignment="Left" Margin="406,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <Label Grid.Column="1" Content="Конец:" HorizontalAlignment="Left" Height="26" Margin="406,163,0,0" VerticalAlignment="Top" Width="111" HorizontalContentAlignment="Center"/>
-        <TextBox x:Name="tbXEnd" Text="10" HorizontalAlignment="Left" Margin="406,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="tbXEnd" HorizontalAlignment="Left" Margin="406,192,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <Label Grid.Column="1" Content="Шаг:" HorizontalAlignment="Left" Height="26" Margin="406,234,0,0" VerticalAlignment="Top" Width="111" HorizontalContentAlignment="Center"/>
-        <TextBox x:Name="tbStep" Text="1" HorizontalAlignment="Left" Margin="406,265,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="tbStep" HorizontalAlignment="Left" Margin="406,265,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <Label Grid.Column="1" Content="Масштаб:" HorizontalAlignment="Left" Height="26" Margin="406,308,0,0" VerticalAlignment="Top" Width="111" HorizontalContentAlignment="Center"/>
-        <TextBox x:Name="tbScale" Text="10" HorizontalAlignment="Left" Margin="406,339,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="tbScale" HorizontalAlignment="Left" Margin="406,339,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="111" Grid.Column="1" Height="28" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 
     </Grid>
 </Window>

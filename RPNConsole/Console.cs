@@ -14,7 +14,7 @@ class Program
         Console.Write("Введите значение переменной: ");
         string argument = Console.ReadLine();
         RPNCalculator calculator = new RPNCalculator(expression);
-        Number answer = calculator.CalculateRPN(argument);
+        double answer = calculator.Calculate(double.Parse(argument));
         Console.WriteLine($"Ответ: {answer}");
     }
 }

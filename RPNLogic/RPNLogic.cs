@@ -72,40 +72,7 @@ namespace RPNLogic
         }
     }
 
-    public class Operation : Token
-    {
-        public char Symbol;
-        public int Priority;
-
-        public Operation(char symbol)
-        {
-            Symbol = symbol;
-            Priority = GetPriority(symbol);
-        }
-
-        public static int GetPriority(char operation)
-        {
-            Dictionary<char, int> priorities = new()
-            {
-                {'+', 1 },
-                {'-', 1 },
-                {'*', 2 },
-                {'/', 2 }
-            };
-
-            return priorities[operation];
-        }
-
-        public static bool operator >=(Operation a, Operation b)
-        {
-            return (a.Priority >= b.Priority);
-        }
-
-        public static bool operator <=(Operation a, Operation b)
-        {
-            return (a.Priority <= b.Priority);
-        }
-    }
+    
 
     public class RPNCalculator
     {
@@ -121,7 +88,7 @@ namespace RPNLogic
         {
             expression = expression.Replace(" ", string.Empty);
 
-            List<Token> tokensList = new List<Token>();
+            List<Token> tokens = new List<Token>();
             string number = string.Empty;
 
             foreach (char symbol in expression)
@@ -130,35 +97,35 @@ namespace RPNLogic
                 {
                     number += symbol;
                 }
-                else
+                else if (Char.IsLetter(symbol))
                 {
-                    if (number != string.Empty)
+                    if (Number.IsX(symbol)) 
                     {
-                        tokensList.Add(new Number(number));
-                        number = string.Empty;
-                    }
-
-                    if (Number.IsX(symbol))
-                    {
-                        tokensList.Add(new Number(symbol));
-                    }
-                    else if (symbol == '(' || symbol == ')')
-                    {
-                        tokensList.Add(new Parenthesis(symbol));
+                        tokens.Add(TokenCreator.Create(symbol));
                     }
                     else
                     {
-                        tokensList.Add(new Operation(symbol));
+                        number += symbol;
                     }
+                }
+                else
+                {
+                    if (number !=  string.Empty)
+                    {
+                        tokens.Add(TokenCreator.Create(number));
+                    }
+                    tokens.Add(TokenCreator.Create(symbol));
+
+                    number = string.Empty;
                 }
             }
 
             if (number != string.Empty)
             {
-                tokensList.Add(new Number(number));
+                tokens.Add(TokenCreator.Create(number));
             }
 
-            return tokensList;
+            return tokens;
         }
 
         public static List<Token> TransformToRPN(List<Token> tokensList)
@@ -187,18 +154,18 @@ namespace RPNLogic
                         opers.Pop();
                     }
                 }
-                else if (token is Operation operFromList)
+                else if (token is Operation listOp)
                 {
-                    if (opers.Count != 0 && opers.Peek() is Operation operFromStack)
+                    if (opers.Count != 0 && opers.Peek() is Operation stackOp)
                     {
-                        if (operFromStack >= operFromList)
+                        if (stackOp >= listOp)
                         {
                             rpn.Add(opers.Pop());
-                            opers.Push(operFromList);
+                            opers.Push(listOp);
                         }
-                        else opers.Push(operFromList);
+                        else opers.Push(listOp);
                     }
-                    else opers.Push(operFromList);
+                    else opers.Push(listOp);
                 }
                 else
                 {
@@ -214,7 +181,12 @@ namespace RPNLogic
             return rpn;
         }
 
-        public double CalculateRPN(double XValue)
+        public double Calculate(double XValue)
+        {
+            return CalculateRPN(XValue).Value;
+        }
+
+        public Number CalculateRPN(double XValue)
         {
             Stack<Number> result = new Stack<Number>();
 
@@ -228,28 +200,21 @@ namespace RPNLogic
                     }
                     else result.Push(number);
                 }
-                else if (token is Operation operation)
+                else 
                 {
-                    Number secondNumber = result.Pop();
-                    Number firstNumber = result.Pop();
-                    result.Push(Calculate(firstNumber, secondNumber, operation));
+                    Operation operation = token as Operation;
+                    Number[] args = new Number[operation.ArgsCount];
+
+                    for (int i = operation.ArgsCount - 1; i >= 0; i--)
+                    {
+                        args[i] = result.Pop();
+                    }
+
+                    result.Push(operation.Execute(args));
                 }
             }
 
-            return result.Pop().Value;
-        }
-
-        public static Number Calculate(Number firstNumber, Number secondNumber, Operation operation)
-        {
-            switch (operation.Symbol)
-            {
-                case '+': return firstNumber + secondNumber;
-                case '-': return firstNumber - secondNumber;
-                case '*': return firstNumber * secondNumber;
-                case '/': return firstNumber / secondNumber;
-            }
-
-            throw new Exception("Invalid symbol");
+            return result.Pop();
         }
     }
 }
