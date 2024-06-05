@@ -41,16 +41,17 @@ namespace WPF
 
         private void DrawCanvas()
         {
+            string expression = tbInput.Text;
             double xStart = double.Parse(tbXStart.Text);
             double xEnd = double.Parse(tbXEnd.Text);
             double yStart = 0, yEnd = 0;
             double step = double.Parse(tbStep.Text);
-            double zoom = double.Parse(tbZoom.Text);
+            double scale = double.Parse(tbScale.Text);
 
-            RPNCalculator calculator = new RPNCalculator(tbInput.Text);
+            RPNCalculator calculator = new RPNCalculator(expression);
             List<Point> points = new List<Point>();
 
-            for (double x = xStart; x < xEnd; x+=step)
+            for (double x = xStart; x <= xEnd; x+=step)
             {
                 double y = calculator.CalculateRPN(x);
                 points.Add(new Point(x, y));
@@ -59,7 +60,7 @@ namespace WPF
                 yEnd = (yEnd < y) ? y : yEnd;
             }
 
-            CanvasDrawer canvasDrawer = new CanvasDrawer(CanvasField, xStart, xEnd, yStart, yEnd, step, zoom);
+            CanvasDrawer canvasDrawer = new CanvasDrawer(CanvasField, xStart, xEnd, yStart, yEnd, step, scale);
             canvasDrawer.DrawGraphic(points);
         }
     }
