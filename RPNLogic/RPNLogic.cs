@@ -86,16 +86,17 @@ namespace RPNLogic
 
         public static List<Token> GetTokensList(string expression)
         {
+            expression = expression.Replace(", ", ":");
             expression = expression.Replace(" ", string.Empty);
 
             List<Token> tokens = new List<Token>();
-            string number = string.Empty;
+            string buffer = string.Empty;
 
             foreach (char symbol in expression)
             {
                 if (Char.IsDigit(symbol) || symbol == ',' || symbol == '.')
                 {
-                    number += symbol;
+                    buffer += symbol;
                 }
                 else if (Char.IsLetter(symbol))
                 {
@@ -105,35 +106,43 @@ namespace RPNLogic
                     }
                     else
                     {
-                        number += symbol;
+                        buffer += symbol;
                     }
                 }
-                else
+                else if (symbol == ':')
                 {
-                    if (number !=  string.Empty)
+                    if (buffer != string.Empty)
                     {
-                        tokens.Add(TokenCreator.Create(number));
+                        tokens.Add(TokenCreator.Create(buffer));
+                    }
+                    buffer = string.Empty;
+                }
+                else 
+                {
+                    if (buffer !=  string.Empty)
+                    {
+                        tokens.Add(TokenCreator.Create(buffer));
                     }
                     tokens.Add(TokenCreator.Create(symbol));
 
-                    number = string.Empty;
+                    buffer = string.Empty;
                 }
             }
 
-            if (number != string.Empty)
+            if (buffer != string.Empty)
             {
-                tokens.Add(TokenCreator.Create(number));
+                tokens.Add(TokenCreator.Create(buffer));
             }
 
             return tokens;
         }
 
-        public static List<Token> TransformToRPN(List<Token> tokensList)
+        public static List<Token> TransformToRPN(List<Token> tokens)
         {
             Stack<Token> opers = new Stack<Token>();
             List<Token> rpn = new List<Token>();
 
-            foreach (Token token in tokensList)
+            foreach (Token token in tokens)
             {
                 if (token is Number)
                 {

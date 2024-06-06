@@ -91,7 +91,7 @@ namespace RPNLogic
         {
             Number num1 = args[0];
             Number num2 = args[1];
-            return new Number(Math.Log(num1.Value, num2.Value));
+            return new Number(Math.Log(num2.Value, num1.Value));
         }
     }
     class Ln : Operation
@@ -131,7 +131,7 @@ namespace RPNLogic
             return new Number(Math.Sqrt(num.Value));
         }
     }
-    class Rt : Operation
+    class Root : Operation
     {
         public override string Name => "rt";
         public override int Priority => 3;
@@ -141,7 +141,7 @@ namespace RPNLogic
         {
             Number num1 = args[0];
             Number num2 = args[1];
-            return new Number(Math.Pow(num2.Value, num1.Value));
+            return new Number(Math.Pow(num2.Value, 1/num1.Value));
         }
     }
     class Sin : Operation

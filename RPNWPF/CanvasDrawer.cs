@@ -56,7 +56,7 @@ namespace WPF
             _scale = scale;
         }
 
-        private void DrawPoint(Point point, Brush color, double radius = 2.6)
+        private void DrawPoint(Point point, Brush color, double radius = 2)
         {
             Ellipse ellipse = new Ellipse()
             {
